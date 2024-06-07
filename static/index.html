@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drapoconli</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+
+        .chartwr {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .for-input {
+            display: grid;
+            grid-template-columns: 50px 400px;
+            grid-template-rows: 400px 50px;
+        }
+
+        .ax {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .tick {
+            position: absolute;
+            background-color: black;
+        }
+
+        .axx .tick {
+            width: 1px;
+            height: 50%;
+        }
+
+        .axy .tick {
+            height: 1px;
+            width: 50%;
+            right: 0;
+
+        }
+
+        .inp {
+            display: grid;
+            grid-template-columns: 480px 1fr 3fr;
+        }
+
+        .model-params-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .model-params-wrapper .full-row {
+            grid-column: 1/3;
+            padding-top: 1rem;
+        }
+    </style>
+    <script src="./chart.js"></script>
+</head>
+
+<body>
+    <div class="inp">
+        <div class="for-input">
+            <div class="ax axy"></div>
+            <canvas id="canvas" width="400" height="400"></canvas>
+            <div class="ax div"></div>
+            <div class="ax axx"></div>
+        </div>
+        <div class="points"></div>
+        <details>
+            <summary>Model Parameters</summary>
+            <div class="model-params-wrapper">
+                <div class="param-title">Inflow (F0)</div>
+                <input type="tel" id="F0_inp" value="0.001666">
+
+                <div class="param-title">Concentration of inflow (c0)</div>
+                <input type="tel" id="c0_inp" value="1000" min="0.000001">
+
+                <div class="param-title">Outflow (F)</div>
+                <input type="tel" id="F_inp" value="0.001666">
+
+                <div class="param-title">Temperature of inflow (T0)</div>
+                <input type="tel" id="T0_inp" value="350">
+
+                <div class="param-title">Reactor radius (r)</div>
+                <input type="tel" id="r_inp" value="0.300" min="0.000001">
+
+                <div class="param-title">Reaction rate coefficient (k0)</div>
+                <input type="tel" id="k0_inp" value="1200000000">
+
+                <div class="param-title">Reaction activation energy (EdivR)</div>
+                <input type="tel" id="EdivR_inp" value="8750">
+
+                <div class="param-title">Reactor internal energy(U)</div>
+                <input type="tel" id="U_inp" value="915.6">
+
+                <div class="param-title">Reactor fluid density (rho)</div>
+                <input type="tel" id="rho_inp" value="1000" min="0.000001">
+
+                <div class="param-title">Molar heat capacity (Cp)</div>
+                <input type="tel" id="Cp_inp" value="600">
+
+                <div class="param-title">Reaction heat (dH)</div>
+                <input type="tel" id="dH_inp" value="-50000.0">
+
+                <div class="param-title">Reactor volume (V)</div>
+                <input type="tel" id="V_inp" value="100" min="0.000001">
+
+                <div class="param-title">Initial Concentration (c_init)</div>
+                <input type="tel" id="c_init_inp" value="956.209" min="0.000001">
+
+                <div class="param-title">Initial Reactor temperature (T_init)</div>
+                <input type="tel" id="T_init_inp" value="250.052">
+
+                <div class="full-row">Parameters for minimizing</div>
+
+                <div class="param-title">Initial Cooling Temperature (Tc0A)</div>
+                <input type="tel" id="Tc0A_inp" value="250">
+                <div class="param-title">Initial Temperature (TrefA)</div>
+                <input type="tel" id="TrefA_inp" value="250.052">
+                <div class="param-title">Initial Concentration (crefA)</div>
+                <input type="tel" id="crefA_inp" value="956.209" min="0.000001">
+
+                <div class="param-title">Cooling Temperature in the end (Tc0B)</div>
+                <input type="tel" id="Tc0B_inp" value="280">
+                <div class="param-title">Reference Temperature at the end (TrefB)</div>
+                <input type="tel" id="TrefB_inp" value="280.099">
+                <div class="param-title">Reference Concentration at the end (crefB)</div>
+                <input type="tel" id="crefB_inp" value="338.691" min="0.000001">
+                
+                <div class="param-title">Min Cooling Temperature (TcMin)</div>
+                <input type="tel" id="TcMin_inp" value="230">
+                <div class="param-title">Max Cooling Temperature (TcMax)</div>
+                <input type="tel" id="TcMax_inp" value="370">
+                <div class="param-title">Min Temperature (TMin)</div>
+                <input type="tel" id="TMin_inp" value="0">
+                <div class="param-title">Max Temperature (TMax)</div>
+                <input type="tel" id="TMax_inp" value="350">
+
+                <div class="param-title">Number of points in Cooling Temperature curve</div>
+                <input type="tel" id="num_points_inp" value="6" step="1" min="2">
+
+                <div class="full-row">Range of axes</div>
+
+                <div class="param-title">t start</div>
+                <input type="tel" id="x1" value="0" min="0">
+                <div class="param-title">t end</div>
+                <input type="tel" id="x2" value="150">
+                <div class="param-title">Tc min</div>
+                <input type="tel" id="y1" value="200">
+                <div class="param-title">Tc max</div>
+                <input type="tel" id="y2" value="400">
+
+                <div class="full-row">
+                    <button id="button_minimizer" style="width:100%;">Run optimizer</button>
+                </div>
+
+                <div class="full-row">
+                    <button id="button_update" style="width:100%;">Update axis ranges</button>
+                </div>
+
+                <div class="full-row">
+                    <div style="width:100%;">
+                        click or drag a point on the cooling temperature graph 
+                        to update the parameters and refresh the temperature graph 
+                        and the concentration trajectory graph.
+                    </div>
+                </div>
+            </div>
+        </details>
+
+    </div>
+
+    <div class="chartwr">
+        <div>
+            <canvas id="tempChart"></canvas>
+        </div>
+        <div>
+            <canvas id="concChart"></canvas>
+        </div>
+    </div>
+    <div id="result"></div>
+    <script src="app.js"></script>
+</body>
+
+</html>
